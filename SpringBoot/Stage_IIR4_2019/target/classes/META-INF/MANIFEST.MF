@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: Elmehdi
+Build-Jdk: 14.0.2
+Implementation-Title: Stage_IIR4_2019
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.stg
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/Stage_IIR4_2019
+Created-By: Maven Integration for Eclipse
+
