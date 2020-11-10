@@ -1,0 +1,137 @@
+<br><h3>Gestion Barrages</h3>
+<br><div class="container">
+  <div class="row">
+
+    <div class="col-lg-6 card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: white;">
+
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nom</th>
+            <th scope="col"style="text-align: right;">Volume Normal</th>
+            <th scope="col" style="text-align: center;">
+              <button class="btn btn-outline-primary" (click)="operation = 'add';initBarrage();" style="text-align: center;">ADD</button>&nbsp;
+              <button class="btn btn-outline-success">
+                <a data-toggle="modal" style="color: green;" href="#ignismyModal2">
+                 CSV
+                </a>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let barrage of barrages">
+          <td >{{barrage.id}}</td>
+          <td >{{barrage.nom}}</td>
+          <td style="text-align: right;">{{barrage.vol}}</td>
+          <td style="text-align: right;">
+            <button class="btn btn-outline-warning" (click)="operation = 'edit';selectedBarrage = barrage;">Edit</button>&nbsp;
+            <button class="btn btn-outline-danger" (click)="operation = 'delete';selectedBarrage = barrage;">Delete</button>
+          </td>
+        </tbody>
+      </table>
+
+
+  </div>
+  <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          {{
+            operation == 'add' ? 'Ajouter Barrage' :
+            operation == 'edit' ? 'Editer Barrage' :
+            operation == 'delete' ? 'Supprimer Barrage' :'Ajouter Barrage'
+
+          }}
+
+        </div>
+        <div class="card-body">
+        <div *ngIf="operation =='add' || operation == 'edit'">
+          <form [formGroup]="barrageForm">
+            <div class="form-group" *ngIf="operation =='edit'">
+              <label>Id :</label>
+
+              <input [(ngModel)]="selectedBarrage.id"  placeholder="Id" class="form-control"type="text" formControlName="id" disabled/>
+            </div>
+
+            <div class="form-group">
+              <label>Nom Barrage :</label>
+              <input [(ngModel)]="selectedBarrage.nom" placeholder="Nom" class="form-control"type="text" formControlName="nom"/>
+            </div>
+
+            <div class="form-group">
+              <label>Volume Normal :</label>
+              <input [(ngModel)]="selectedBarrage.vol" placeholder="Volume Normal" class="form-control"type="text" formControlName="vol"/>
+            </div>
+            <br>
+            <button class="btn btn-success"
+              (click)="operation == 'add' ? addBarrage() : saveupdateBarrage();operation2 = operation;">
+                <a data-toggle="modal" style="color: white;" href="#ignismyModal">
+              {{
+                operation == 'add' ? 'Ajouter' :
+                operation == 'edit' ? 'Sauvgarder':'Ajouter'
+              }}
+              </a>
+            </button>
+          </form>
+        </div>
+        </div>
+        <div *ngIf="operation == 'delete'" style="text-align: center;">
+            <p class="card-title">Barrage : {{selectedBarrage.id}}-{{selectedBarrage.nom}}</p>
+            <p>Voulez vous supprimer ce Barrage ?</p>
+              <a data-toggle="modal" style="color: white;" href="#ignismyModal">
+            <button class="btn btn-danger" (click)="deleteBarrage(selectedBarrage);operation2='delete';">Confirmer</button>
+            </a>
+        </div>
+        <div class="card-footer">
+
+        </div>
+      </div>
+  </div>
+
+  </div>
+  <div class="modal fade" id="ignismyModal" role="dialog" style=" shadow-lg mb-5 bg-white rounded">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label=""><span>×</span></button>
+              </div>
+              <div class="modal-body" >
+						      <div class="thank-you-pop">
+							        <img src="https://sssc.vic.edu.au/wp-content/uploads/2018/08/checkmark.gif" alt="">
+							        <h1>Barrage bien {{
+                        operation2 == 'delete' ? 'Supprimé' :
+                        operation2 == 'edit' ? 'Modifié':'Ajouté'
+                      }} !</h1>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="modal fade" id="ignismyModal2" role="dialog" style=" shadow-lg mb-5 bg-white rounded">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="text-align: center;">Importer Fichier CSV</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label=""><span>×</span></button>
+            </div>
+            <div class="modal-body" >
+                <div class="thank-you-pop">
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile" accept=".csv" (change)="handleFileSelect($event)"  oninvalid="this.setCustomValidity('Enter User Name Here')"
+                           oninput="this.setCustomValidity('')">
+                    <label class="custom-file-label" for="customFile">Choose file csv</label>
+                  </div><hr>
+
+                   <button (click)="ConvertCSVtoJSON();operation2 = 'importer'" data-dismiss="modal" style="background-color:green" class="btn btn-success">
+                     <a data-toggle="modal"  class="btn btn-success" style="background-color:green ;color: white;" href="#ignismyModal">
+                       Close
+                       </a>
+
+                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,164 @@
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<br><h3>Gestion Reservation d'Eau</h3>
+<br><div class="container">
+
+  <div class="row">
+    <div class="col-lg-8 card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: white;">
+
+
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Barrage</th>
+            <th scope="col"style="text-align: center;">Date</th>
+            <th scope="col"style="text-align: right;">Quantite</th>
+            <th scope="col"style="text-align: right;">Volume normal</th>
+            <th scope="col" style="text-align: center;">
+              <button class="btn btn-outline-primary" (click)="operation = 'add';initCapacite();" style="text-align: center;">ADD</button>&nbsp;
+              <button class="btn btn-outline-success">
+                <a data-toggle="modal" style="color: green;" href="#ignismyModal2">
+                 CSV
+                </a>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let capacite of capacites">
+          <td >{{capacite[0]}}</td>
+          <td >{{capacite[1]}}</td>
+          <td style="text-align: right;">{{capacite[5]}}</td>
+          <td style="text-align: right;">{{capacite[3]}}</td>
+          <td style="text-align: right;">{{capacite[2]}}</td>
+          <td style="text-align: right;">
+            <button class="btn btn-outline-warning" (click)="operation = 'edit';changerSelect(capacite);">Edit</button>&nbsp;
+            <button class="btn btn-outline-danger" (click)="operation = 'delete';changerSelect(capacite);">Delete</button>
+          </td>
+        </tbody>
+      </table>
+
+
+  </div>
+  <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          {{
+            operation == 'add' ? 'Ajouter Reservation d`Eau' :
+            operation == 'edit' ? 'Editer Reservation d`Eau' :
+            operation == 'delete' ? 'Supprimer Reservation d`Eau' :'Ajouter Reservation d`Eau'
+
+          }}
+
+        </div>
+        <div class="card-body">
+        <div *ngIf="operation =='add' || operation == 'edit'">
+          <form [formGroup]="capaciteForm">
+            <div  *ngIf="operation =='edit'" class="form-group">
+              <label>Id :</label>
+              <input [(ngModel)]="selectedCapacite.id" placeholder="Id" class="form-control"type="text" formControlName="id" disabled/>
+            </div>
+            <div class="alert alert-danger" *ngIf="!operation =='edit'" >
+                Id Obligatoire !!
+            </div>
+            <div class="form-group">
+                <label for="dateOfBirth">Date :</label>
+                <input id="date"  [(ngModel)]="selectedCapacite.ddate" type="date" class="form-control" class="form-control" formControlName="ddate" />
+            </div>
+
+            <div class="form-group">
+              <label>Barrage :</label>
+              <select [(ngModel)]="selectedCapacite.nom" (change)="valmax()" placeholder="Barrage" id="barrage" class="form-control" type="text" formControlName="nom">
+                <option *ngFor="let barrage of barrages" [value]="barrage.id"  [selected]="true">{{barrage.nom}}</option>
+              </select>
+
+            </div>
+
+            <div class="form-group">
+              <label>Volume :</label>
+              <div class="input-group mb-2">
+                <input [(ngModel)]="selectedCapacite.volume" max="{{varmax}}"  min="1" id="quantite"  placeholder="Quantite" class="form-control" type="number" formControlName="volume"/>
+                <div class="input-group-prepend">
+                    <div class="input-group-text">/{{varmax}}</div>
+                </div>
+              </div>
+
+            </div>
+            <br>
+            <button class="btn btn-success"
+              (click)="operation == 'add' ? addCapacite() : saveupdateCapacite();operation2 = operation;"  >
+              <a data-toggle="modal" style="color: white;" href="#ignismyModal">
+                {{
+                  operation == 'add' ? 'Ajouter' :
+                  operation == 'edit' ? 'Sauvgarder':'Ajouter'
+                }}
+              </a>
+            </button>
+
+          </form>
+        </div>
+        </div>
+        <div *ngIf="operation == 'delete'" style="text-align: center;">
+            <p class="card-title">Capacite : {{selectedCapacite.id}}-{{selectedCapacite.nom}}</p>
+            <p>Voulez vous supprimer cette capacité ?</p>
+            <button class="btn btn-danger" (click)="deleteCapacite(selectedCapacite);operation2='delete';" >
+                <a data-toggle="modal" style="color: white;" href="#ignismyModal">
+                  Confirmer
+                </a>
+            </button>
+        </div>
+        <div class="card-footer">
+        </div>
+      </div>
+  </div>
+ </div>
+
+
+
+  <div class="modal fade" id="ignismyModal" role="dialog" style=" shadow-lg mb-5 bg-white rounded">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label=""><span>×</span></button>
+              </div>
+              <div class="modal-body" >
+						      <div class="thank-you-pop">
+							        <img src="https://sssc.vic.edu.au/wp-content/uploads/2018/08/checkmark.gif" alt="">
+							        <h1>Reserve bien {{
+                        operation2 == 'delete' ? 'Supprimé' :
+                        operation2 == 'importer' ? 'Importé' :
+                        operation2 == 'edit' ? 'Modifié':'Ajouté'
+                      }} !</h1>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+</div>
+<div class="modal fade" id="ignismyModal2" role="dialog" style=" shadow-lg mb-5 bg-white rounded">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="text-align: center;">Importer Fichier CSV</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label=""><span>×</span></button>
+            </div>
+            <div class="modal-body" >
+                <div class="thank-you-pop">
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile" accept=".csv" (change)="handleFileSelect($event)"  oninvalid="this.setCustomValidity('Enter User Name Here')"
+                           oninput="this.setCustomValidity('')">
+                    <label class="custom-file-label" for="customFile">Choose file csv</label>
+                  </div><hr>
+
+                   <button (click)="ConvertCSVtoJSON();operation2 = 'importer'" data-dismiss="modal" style="background-color:green" class="btn btn-success">
+                     <a data-toggle="modal"  class="btn btn-success" style="background-color:green ;color: white;" href="#ignismyModal">
+                       Importer
+                       </a>
+
+                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
